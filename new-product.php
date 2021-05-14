@@ -86,7 +86,7 @@ session_start();
         <ul>
           <li><a href="index.php">Home</a></li>
           <li class="active"><a href="new-product.php">Add New Product</a></li>
-          <li><a href="offers-farm.php">Offers & Promotions</a></li>
+          <li><a href="price-today.php">Today's Pricing</a></li>
           <li><a href="hire-labour.php">Hire Labour</a></li>
           <li><a href="buy-fodders.php">Buy Fodder</a></li>
           <li><a href="#">Farm: <?php echo $user_data['user_name'] ?></a></li>
