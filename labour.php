@@ -5,9 +5,14 @@ session_start();
     include("functions.php");
 
     $user_data = check_login($con);
+    $labour_id = $_GET["id"];
 
-    $all_labours_query = "select * from users where user_role = 'labour'";
-    $all_labours = mysqli_query($con, $all_labours_query);
+    $labour_query = "select * from users where id = '$labour_id'";
+    $labour = mysqli_query($con, $labour_query);
+
+    if($labour && mysqli_num_rows($labour) > 0) {
+        $labour_data = mysqli_fetch_assoc($labour);
+    }
 
 ?>
 
@@ -77,10 +82,10 @@ session_start();
       <div class="container">
 
         <div class="d-flex justify-content-between align-items-center">
-          <h2>Hire Labour</h2>
+          <h2><?php echo $labour_data['user_name'] ?> Profile Page</h2>
           <ol>
             <li><a href="index.php">Home</a></li>
-            <li>Hire Labour</li>
+            <li>Labour Profile</li>
           </ol>
         </div>
 
@@ -89,20 +94,53 @@ session_start();
 
     <section class="inner-page">
         <div class="container">
-            <h3>Hire Labour</h3>
             <div class="row">
-                <?php
-                    while($row = mysqli_fetch_array($all_labours)) {
-                ?>
-
-                <div class="col-6">
-                    <a href=<?php echo "labour.php?id=". $row['id'] ?>><img src=<?php echo "./uploads/".$row['image'] ?> alt="" style="width: 50%; border: 1px solid #cda45e;"></a>
-                    <h5>Name: <?php echo $row['user_name'] ?></h5>
-                    <h5>Labour Type: <?php echo $row['category'] ?></h5>
+                <div class="col-8">
+                    <h5>Name: <span><?php echo $labour_data['user_name'] ?></span></h5>
+                    <h5>Type of Work: <span><?php echo $labour_data['category'] ?></span></h5>
+                    <p>Phone Number: <span>0<?php echo $labour_data['phone'] ?></span></p>
+                    <p>Address: <span><?php echo $labour_data['address'] ?></span></p>
                 </div>
-
-                <?php } ?>
+                <div class="col-4">
+                    <img src=<?php echo "./uploads/".$labour_data['image'] ?> alt="" style="width: 100%; border: 1px solid #cda45e;">
+                </div>
             </div>
+
+            <h3>Hire This Person</h3>
+            
+            <form method="post">
+            <div class="row mb-3">
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="How much Time do you need him?" name="time" required>
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" placeholder="Money per Day" name="money" required>
+                </div>
+            </div>
+
+            <textarea class="form-control mb-3" rows="5" name="message" placeholder="Send him a message.." required></textarea>
+
+            <input type="submit" class="btn btn-primary" value="Hire This person">
+            <?php
+                if($_SERVER['REQUEST_METHOD'] == "POST") {
+                    $time = $_POST['time'];
+                    $money = $_POST['money'];
+                    $message = $_POST['message'];
+                    $farm_name = $user_data['user_name'];
+                    $labour_name = $labour_data['user_name'];
+
+                    $query = "insert into hiring (farm_name,labour_name,time,money,message) values ('$farm_name','$labour_name','$time','$money','$message')";
+                    $result = mysqli_query($con, $query);
+
+                    if($result) {
+                        echo "successfully added your request";
+                    } else {
+                        echo "error adding your request";
+                    }
+                }
+            ?>
+            </form>
+
         </div>
     </section>
 
