@@ -5,6 +5,7 @@ session_start();
     include("functions.php");
 
     $error_msg = "";
+    $image = '';
 
     if($_SERVER['REQUEST_METHOD'] == "POST") {
         $user_name = $_POST['user_name'];
@@ -13,8 +14,18 @@ session_start();
         $password = $_POST['password'];
         $user_role = $_POST['user_role'];
 
+        $target_dir = "uploads/";
+        $target_file = $target_dir . time() . basename($_FILES["fileToUpload"]["name"]);
 
-        $query = "insert into users (user_name,email,password,phone,user_role,balance) values ('$user_name','$email','$password','$phone','$user_role',0)";
+        if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+            $image = time() . basename($_FILES["fileToUpload"]["name"]);
+            $error_msg = "The file ". htmlspecialchars( basename( $_FILES["fileToUpload"]["name"])). " has been uploaded.";
+        } else {
+            $error_msg = "Sorry, there was an error uploading your LOGO.";
+        }
+
+
+        $query = "insert into users (user_name,email,password,phone,user_role,balance,image) values ('$user_name','$email','$password','$phone','$user_role',0,'$image')";
         $result = mysqli_query($con, $query);
 
         if($result) {
@@ -127,6 +138,9 @@ session_start();
         </div>
         </div>
 
+        <label for="fileToUpload">Your Image (Required): </label>
+        <input type="file" name="fileToUpload" class="mb-3" id="fileToUpload" required> <br>
+
         <div class="form-check mb-1 mt-3">
             <label class="form-check-label">
                 <input type="radio" class="form-check-input" name="user_role" value="farm">Farm
@@ -142,6 +156,8 @@ session_start();
                 <input type="radio" class="form-check-input" name="user_role" value="customer">Customer
             </label>
         </div>
+
+        
 
 
         <button type="submit" class="btn btn-primary">Register</button>
