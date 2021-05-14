@@ -5,9 +5,14 @@ session_start();
     include("functions.php");
 
     $user_data = check_login($con);
+    $fodder_id = $_GET["id"];
 
-    $all_fodders_query = "select * from fodders";
-    $all_fodders = mysqli_query($con, $all_fodders_query);
+    $fodder_query = "select * from fodders where id = '$fodder_id'";
+    $fodder = mysqli_query($con, $fodder_query);
+
+    if($fodder && mysqli_num_rows($fodder) > 0) {
+        $fodder_data = mysqli_fetch_assoc($fodder);
+    }
 
 ?>
 
@@ -89,20 +94,83 @@ session_start();
 
     <section class="inner-page">
         <div class="container">
-            <h3>Hire Labour</h3>
             <div class="row">
-                <?php
-                    while($row = mysqli_fetch_array($all_fodders)) {
-                ?>
+                <div class="col-8">
+                    <h5>Name: <span><?php echo $fodder_data['name'] ?></span></h5>
+                    <h5>Available Amount: <span><?php echo $fodder_data['amount'] ?> Kg</span></h5>
+                    <p>Kg Price: <span><?php echo $fodder_data['price'] ?> L.E</span></p>
+                </div>
+                <div class="col-4">
+                    <img src=<?php echo "./uploads/".$fodder_data['image'] ?> alt="" style="width: 100%; border: 1px solid #cda45e;">
+                </div>
+            </div>
 
-                <div class="col-6">
-                    <a href=<?php echo "fodder.php?id=". $row['id'] ?>><img src=<?php echo "./uploads/".$row['image'] ?> alt="" style="width: 50%; border: 1px solid #cda45e;"></a>
-                    <h5>Name: <?php echo $row['name'] ?></h5>
+            <h3>Buy This Fodder</h3>
+            
+            <form method="post">
+
+                <div class="form-group mt-2">
+                    <label>Card holder's name</label>
+                    <input type="text" placeholder="Card holder's name" class="form-control">
                 </div>
 
-                <?php } ?>
-            </div>
-        </div>
+                <div class="form-group">
+                <label>Card number</label>
+                <input type="number" placeholder="Card number" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>Expire Date</label>
+                    <input type="date" placeholder="dd/mm/yy" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>CVV</label>
+                    <input type="text" placeholder="CVV" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="text" class="form-control mb-3" placeholder="How much do you need?" name="quantity" required>
+                </div>
+            
+                <input type="submit" class="btn btn-primary" value="Buy This Quantity">
+            <?php
+                if($_SERVER['REQUEST_METHOD'] == "POST") {
+                    $quantity = $_POST['quantity'];
+                    $farm_name = $user_data['user_name'];
+
+                    $get_money_query = "select * from users where user_role = 'admin'";
+                    $get_money = mysqli_query($con, $get_money_query);
+
+                    if($get_money && mysqli_num_rows($get_money) > 0) {
+                        $current_money = mysqli_fetch_assoc($get_money);
+                        $deposit = $fodder_data['price'] * $quantity;
+                        $updated_money = $current_money['balance'] + $deposit;
+
+                        $add_money_query = "update users set balance = '$updated_money' where user_role = 'admin'";
+                        $add_money = mysqli_query($con, $add_money_query);
+
+                        if($add_money) {
+                            $query = "insert into fodder_purchases (fodder_id,farm_name,quantity) values ('$fodder_id','$farm_name','$quantity')";
+                            $result = mysqli_query($con, $query);
+
+                            if($result) {
+                                echo "successfully purchased the fodder";
+                            } else {
+                                echo "error purchasing the fodder";
+                            }
+                        } else {
+                            echo "error adding money to our account";
+                        }
+                    }
+
+                    
+                }
+            ?>
+            </form>
+
+      </div>
     </section>
 
   </main><!-- End #main -->
