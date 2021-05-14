@@ -59,13 +59,13 @@ session_start();
           <li><a href="new-fodder.php">Add New Fodder</a></li>
           <li><a href="avail-fodders.php">Available Fodders</a></li>
           <li><a href="fodders-sales.php">Fodders Sales</a></li>
-          <li><a href="#">Balance: <?php echo $user_data['balance'] ?> L.E</a></li>
+          <li><a href="#">Admin: <?php echo $user_data['user_name'] ?></a></li>
           <li><a href="logout.php">Logout</a></li>
 
         </ul>
       </nav><!-- .nav-menu -->
 
-      <a href="#about" class="get-started-btn scrollto">Get Started</a>
+      <a href="#" class="get-started-btn scrollto">Balance: <?php echo $user_data['balance'] ?> L.E</a>
 
     </div>
   </header><!-- End Header -->
