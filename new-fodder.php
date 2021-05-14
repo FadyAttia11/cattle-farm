@@ -125,7 +125,7 @@ session_start();
                 $result = mysqli_query($con, $query);
 
                 if($result) {
-                    echo "Successfully added your fodder!";
+                    header('Location: avail-fodders.php');
                 } else {
                     echo "Error adding your fodder!";
                 }

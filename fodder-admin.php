@@ -5,9 +5,14 @@ session_start();
     include("functions.php");
 
     $user_data = check_login($con);
+    $fodder_id = $_GET["id"];
 
-    $all_fodders_query = "select * from fodders";
-    $all_fodders = mysqli_query($con, $all_fodders_query);
+    $fodder_query = "select * from fodders where id = '$fodder_id'";
+    $fodder = mysqli_query($con, $fodder_query);
+
+    if($fodder && mysqli_num_rows($fodder) > 0) {
+        $fodder_data = mysqli_fetch_assoc($fodder);
+    }
 
 ?>
 
@@ -90,16 +95,31 @@ session_start();
     <section class="inner-page">
         <div class="container">
             <div class="row">
-                <?php
-                    while($row = mysqli_fetch_array($all_fodders)) {
-                ?>
+                <div class="col-8">
+                    <h5>Name: <span><?php echo $fodder_data['name'] ?></span></h5>
+                    <h5>Available Amount: <span><?php echo $fodder_data['amount'] ?> Kg</span></h5>
+                    <p>Kg Price: <span><?php echo $fodder_data['price'] ?> L.E</span></p>
+                    <form method="post">
+                        <input type="hidden" name="fodder_id" value=<?php echo $fodder_data['id'] ?>>
+                        <input type="submit" class="btn btn-danger" value="Delete This Fodder">
+                        <?php
+                            if($_SERVER['REQUEST_METHOD'] == "POST"){
+                                $fodder_id = $_POST['fodder_id'];
 
-                <div class="col-6">
-                    <a href=<?php echo "fodder-admin.php?id=". $row['id'] ?>><img src=<?php echo "./uploads/".$row['image'] ?> alt="" style="width: 50%; border: 1px solid #cda45e;"></a>
-                    <h5>Name: <?php echo $row['name'] ?></h5>
+                                $delete_query = "delete from fodders where id = '$fodder_id'";
+                                $delete = mysqli_query($con, $delete_query);
+
+                                if($delete) {
+                                    header('Location: avail-fodders.php');
+                                }
+                                
+                            }
+                        ?>
+                    </form>
                 </div>
-
-                <?php } ?>
+                <div class="col-4">
+                    <img src=<?php echo "./uploads/".$fodder_data['image'] ?> alt="" style="width: 100%; border: 1px solid #cda45e;">
+                </div>
             </div>
       </div>
     </section>
