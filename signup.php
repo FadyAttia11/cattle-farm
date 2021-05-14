@@ -129,12 +129,17 @@ session_start();
 
         <div class="form-check mb-1 mt-3">
             <label class="form-check-label">
-                <input type="radio" class="form-check-input" name="user_role" value="customer">Customer
+                <input type="radio" class="form-check-input" name="user_role" value="farm">Farm
             </label>
         </div>
         <div class="form-check mb-1">
             <label class="form-check-label">
-                <input type="radio" class="form-check-input" name="user_role" value="planner">Event Planner
+                <input type="radio" class="form-check-input" name="user_role" value="labour">Labour
+            </label>
+        </div>
+        <div class="form-check mb-1">
+            <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="user_role" value="customer">Customer
             </label>
         </div>
 
