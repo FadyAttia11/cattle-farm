@@ -6,9 +6,31 @@ session_start();
 
     $user_data = check_login($con);
     $farm_name = $user_data['user_name'];
+    $product_id = $_GET["id"];
 
-    $my_products_query = "select * from products where farm_name = '$farm_name'";
-    $my_products = mysqli_query($con, $my_products_query);
+    $product_query = "select * from products where id = '$product_id'";
+    $product = mysqli_query($con, $product_query);
+
+    if($product && mysqli_num_rows($product) > 0) {
+        $product_data = mysqli_fetch_assoc($product);
+    }
+
+    $offers_query = "select * from offers where product_id = '$product_id'";
+    $offers = mysqli_query($con, $offers_query);
+
+    if($_SERVER['REQUEST_METHOD'] == "POST"){
+        if(isset($_POST['offer_id'])) {
+            $offer_id = $_POST['offer_id'];
+
+            $delete_query = "delete from offers where id = '$offer_id'";
+            $delete = mysqli_query($con, $delete_query);
+
+            if($delete) {
+                header('Location: my-product.php?id='. $product_id);
+                // echo "hello";
+            }
+        }
+    }
 
 ?>
 
@@ -77,11 +99,11 @@ session_start();
     <section id="breadcrumbs" class="breadcrumbs">
       <div class="container">
 
-        <div class="d-flex justify-content-between align-items-center">
-          <h2>Farm: <?php echo $user_data['user_name'] ?></h2>
+      <div class="d-flex justify-content-between align-items-center">
+          <h2>Product: <?php echo $product_data['product_name'] ?></h2>
           <ol>
             <li><a href="index.php">Home</a></li>
-            <li>Farm: <?php echo $user_data['user_name'] ?></li>
+            <li>Product: <?php echo $product_data['product_name'] ?></li>
           </ol>
         </div>
 
@@ -92,33 +114,83 @@ session_start();
     <section id="portfolio-details" class="portfolio-details">
       <div class="container">
 
-        <div class="portfolio-description">
-          <h2>Farm Contact Info</h2>
-          <p><strong>Phone</strong>: 0<?php echo $user_data['phone'] ?></p>
-          <p><strong>Address</strong>: <?php echo $user_data['address'] ?></p>
-        </div>
-
         <div class="portfolio-details-container">
-            <img src=<?php echo "./uploads/". $user_data['image'] ?> class="img-fluid" alt="">
+
+        <img src=<?php echo "./uploads/". $product_data['image'] ?> class="img-fluid" alt="">
+
+          <div class="portfolio-info">
+            <h3>Product information</h3>
+            <ul>
+              <li><strong>Type</strong>: <?php echo $product_data['type'] ?></li>
+              <li><strong>Category</strong>: <?php echo $product_data['category'] ?></li>
+              <li><strong>Amount</strong>: <?php echo $product_data['amount'] ?> Unit</li>
+              <li><strong>Price</strong>: <?php echo $product_data['price'] ?> L.E</li>
+            </ul>
+          </div>
+
         </div>
 
         <div class="portfolio-description">
-            <h2>My Products</h2>
+          <h2>Product Description</h2>
+          <p><?php echo $product_data['description'] ?></p>
+        </div>
+
+        <div class="portfolio-description">
+          <h2>Make Offers & Promotions on This Product</h2>
+          <p>(Specify a discount on a specific amount of this product)</p>
+            <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                <div class="row mb-3">
+                    <div class="col">
+                        <input type="number" class="form-control" placeholder="Quantity" name="quantity" required>
+                    </div>
+                    <div class="col">
+                        <input type="number" class="form-control" placeholder="Total Price" name="total_price" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Add This Offer</button>
+                <?php
+                    if($_SERVER['REQUEST_METHOD'] == "POST") {
+                        if(isset($_POST['quantity'])) {
+                            $quantity = $_POST['quantity'];
+                            $total_price = $_POST['total_price'];
+    
+                            $query = "insert into offers (farm_name,product_id,quantity,total_price) values ('$farm_name','$product_id','$quantity','$total_price')";
+                            $result = mysqli_query($con, $query);
+    
+                            if($result) {
+                                echo "Successfully added your offer";
+                            } else {
+                                echo "error adding your offer";
+                            }
+                        }
+                    }
+                ?>
+            </form>
+        </div>
+
+        <div class="portfolio-description">
+            <h2>My Offers For This Product</h2>
             <div class="row">
                 <?php
-                    while($row = mysqli_fetch_array($my_products)) {
+                while($row = mysqli_fetch_array($offers)) {
                 ?>
-
-                <div class="col-6">
-                    <a href=<?php echo "my-product.php?id=". $row['id'] ?>><img src=<?php echo "./uploads/".$row['image'] ?> alt="" style="width: 50%; border: 1px solid #cda45e;"></a>
-                    <h5>Name: <?php echo $row['product_name'] ?></h5>
+                
+                <div class="card col-5 ml-2" style="width: 18rem;">
+                    <div class="card-body">
+                        <p class="card-text">Quantity: <?php echo $row['quantity'] ?> Unit</p>
+                        <p class="card-text">Total Price: <?php echo $row['total_price'] ?> L.E</p>
+                        <form method="post">
+                            <input type="hidden" name="offer_id" value=<?php echo $row['id'] ?>>
+                            <input type="submit" class="btn btn-danger" value="Delete This offer">
+                        </form>
+                    </div>
                 </div>
 
                 <?php } ?>
             </div>
         </div>
 
-        
       </div>
     </section><!-- End Portfolio Details Section -->
 

@@ -13,6 +13,7 @@ session_start();
         $email = $_POST['email'];
         $password = $_POST['password'];
         $user_role = $_POST['user_role'];
+        $address = $_POST['address'];
 
         $target_dir = "uploads/";
         $target_file = $target_dir . time() . basename($_FILES["fileToUpload"]["name"]);
@@ -25,7 +26,7 @@ session_start();
         }
 
 
-        $query = "insert into users (user_name,email,password,phone,user_role,balance,image) values ('$user_name','$email','$password','$phone','$user_role',0,'$image')";
+        $query = "insert into users (user_name,email,password,phone,user_role,balance,address,image) values ('$user_name','$email','$password','$phone','$user_role',0,'$address','$image')";
         $result = mysqli_query($con, $query);
 
         if($result) {
@@ -137,6 +138,8 @@ session_start();
             <input type="password" class="form-control" placeholder="Password" name="password" required>
         </div>
         </div>
+
+        <textarea class="form-control mb-3" rows="5" name="address" placeholder="Your Address.." required></textarea>
 
         <label for="fileToUpload">Your Image (Required): </label>
         <input type="file" name="fileToUpload" class="mb-3" id="fileToUpload" required> <br>

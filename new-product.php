@@ -10,7 +10,8 @@ session_start();
     $image = '';
 
     if($_SERVER['REQUEST_METHOD'] == "POST") {
-        $name = $_POST['name'];
+        $farm_name = $user_data['user_name'];
+        $product_name = $_POST['product_name'];
         $type = $_POST['type'];
         $category = $_POST['category'];
         $amount = $_POST['amount'];
@@ -28,7 +29,7 @@ session_start();
         }
 
 
-        $query = "insert into products (name,type,category,amount,price,description,image) values ('$name','$type','$category','$amount','$price','$description','$image')";
+        $query = "insert into products (farm_name,product_name,type,category,amount,price,description,image) values ('$farm_name','$product_name','$type','$category','$amount','$price','$description','$image')";
         $result = mysqli_query($con, $query);
 
         if($result) {
@@ -120,7 +121,7 @@ session_start();
       <div class="container" style="max-width: 700px;">
       <h3>Add New Product</h3>
       <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
-      <input type="text" class="form-control mb-3" placeholder="Product Name" name="name" required>
+      <input type="text" class="form-control mb-3" placeholder="Product Name" name="product_name" required>
         <div class="row mb-3">
         <div class="col">
             <select class="form-control" name="type" required>
@@ -129,6 +130,7 @@ session_start();
                 <option>Cattle</option>
                 <option>Sheep</option>
                 <option>Camel</option>
+                <option>Chicken</option>
             </select> 
         </div>
         <div class="col">
@@ -142,10 +144,10 @@ session_start();
         </div>
         <div class="row mb-3">
         <div class="col">
-            <input type="number" class="form-control" placeholder="Available Amount (in Kg)" name="amount" required>
+            <input type="number" class="form-control" placeholder="Available Amount" name="amount" required>
         </div>
         <div class="col">
-            <input type="number" class="form-control" placeholder="Kilogram Price (in L.E)" name="price" required>
+            <input type="number" class="form-control" placeholder="Unit Price (in L.E)" name="price" required>
         </div>
         </div>
 
