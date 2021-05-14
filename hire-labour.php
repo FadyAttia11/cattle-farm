@@ -5,9 +5,13 @@ session_start();
     include("functions.php");
 
     $user_data = check_login($con);
+    $farm_name = $user_data['user_name'];
 
     $all_labours_query = "select * from users where user_role = 'labour'";
     $all_labours = mysqli_query($con, $all_labours_query);
+
+    $labour_responses_query = "select * from hiring where farm_name = '$farm_name' and response != ''";
+    $labour_responses = mysqli_query($con, $labour_responses_query);
 
 ?>
 
@@ -89,20 +93,40 @@ session_start();
 
     <section class="inner-page">
         <div class="container">
-            <h3>Hire Labour</h3>
-            <div class="row">
-                <?php
-                    while($row = mysqli_fetch_array($all_labours)) {
-                ?>
+          <h3>Hire Labour</h3>
+          <div class="row">
+              <?php
+                  while($row = mysqli_fetch_array($all_labours)) {
+              ?>
 
-                <div class="col-6">
-                    <a href=<?php echo "labour.php?id=". $row['id'] ?>><img src=<?php echo "./uploads/".$row['image'] ?> alt="" style="width: 50%; border: 1px solid #cda45e;"></a>
-                    <h5>Name: <?php echo $row['user_name'] ?></h5>
-                    <h5>Labour Type: <?php echo $row['category'] ?></h5>
+              <div class="col-6">
+                  <a href=<?php echo "labour.php?id=". $row['id'] ?>><img src=<?php echo "./uploads/".$row['image'] ?> alt="" style="width: 50%; border: 1px solid #cda45e;"></a>
+                  <h5>Name: <?php echo $row['user_name'] ?></h5>
+                  <h5>Labour Type: <?php echo $row['category'] ?></h5>
+              </div>
+
+              <?php } ?>
+          </div>
+          
+          <h3 style="margin-top: 100px;">Labour Responses</h3>
+          <div class="row">
+                <?php
+                while($row = mysqli_fetch_array($labour_responses)) {
+                ?>
+                
+                <div class="card col-5 ml-2" style="width: 18rem;">
+                    <div class="card-body">
+                        <p class="card-text">Labour Name: <?php echo $row['labour_name'] ?></p>
+                        <p class="card-text">Time Needed: <?php echo $row['time'] ?></p>
+                        <p class="card-text">Money per Day: <?php echo $row['money'] ?> L.E</p>
+                        <p class="card-text">Message: <?php echo $row['message'] ?></p>
+                        <p class="card-text">Response: <strong><?php echo $row['response'] ?></strong></p>
+                    </div>
                 </div>
 
                 <?php } ?>
             </div>
+
         </div>
     </section>
 

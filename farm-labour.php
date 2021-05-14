@@ -61,7 +61,7 @@ session_start();
         <ul>
           <li><a href="index.php">Home</a></li>
           <li class="active"><a href="all-farms.php">All Farms</a></li>
-          <li><a href="job-requests">Job Requests</a></li>
+          <li><a href="job-requests.php">Job Requests</a></li>
           <li><a href="logout.php">Logout</a></li>
 
         </ul>

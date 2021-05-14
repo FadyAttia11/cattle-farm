@@ -129,7 +129,7 @@ session_start();
                     $farm_name = $user_data['user_name'];
                     $labour_name = $labour_data['user_name'];
 
-                    $query = "insert into hiring (farm_name,labour_name,time,money,message) values ('$farm_name','$labour_name','$time','$money','$message')";
+                    $query = "insert into hiring (farm_name,labour_name,time,money,message,response) values ('$farm_name','$labour_name','$time','$money','$message','')";
                     $result = mysqli_query($con, $query);
 
                     if($result) {
