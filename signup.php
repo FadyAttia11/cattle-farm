@@ -26,12 +26,17 @@ session_start();
         }
 
 
-        $query = "insert into users (user_name,email,password,phone,user_role,balance,address,image) values ('$user_name','$email','$password','$phone','$user_role',0,'$address','$image')";
+        $query = "insert into users (user_name,email,password,phone,user_role,category,balance,address,image) values ('$user_name','$email','$password','$phone','$user_role','',0,'$address','$image')";
         $result = mysqli_query($con, $query);
 
         if($result) {
-            $_SESSION['user_id'] = $user_name;
-            header('Location: index.php');
+            if($user_role == 'labour') {
+              $_SESSION['user_id'] = $user_name;
+              header('Location: labour-extra.php');
+            } else {
+              $_SESSION['user_id'] = $user_name;
+              header('Location: index.php');
+            }
         } else {
             $error_msg =  "username or email is already taken!";
         }
@@ -139,7 +144,7 @@ session_start();
         </div>
         </div>
 
-        <textarea class="form-control mb-3" rows="5" name="address" placeholder="Your Address.." required></textarea>
+        <textarea class="form-control mb-3" rows="5" name="address" placeholder="Your Address.."></textarea>
 
         <label for="fileToUpload">Your Image (Required): </label>
         <input type="file" name="fileToUpload" class="mb-3" id="fileToUpload" required> <br>

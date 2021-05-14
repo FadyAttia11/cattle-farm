@@ -5,9 +5,7 @@ session_start();
     include("functions.php");
 
     $user_data = check_login($con);
-
-    $all_labours_query = "select * from users where user_role = 'labour'";
-    $all_labours = mysqli_query($con, $all_labours_query);
+    $user_name = $user_data['user_name'];
 
 ?>
 
@@ -48,24 +46,7 @@ session_start();
   <header id="header" class="fixed-top header-inner-pages">
     <div class="container-fluid d-flex align-items-center justify-content-between">
 
-      <h1 class="logo"><a href="index.php">TheCattleFarm</a></h1>
-      <!-- Uncomment below if you prefer to use an image logo -->
-      <!-- <a href="index.html" class="logo"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
-
-      <nav class="nav-menu d-none d-lg-block">
-        <ul>
-          <li><a href="index.php">Home</a></li>
-          <li><a href="new-product.php">Add New Product</a></li>
-          <li><a href="price-today.php">Today's Pricing</a></li>
-          <li class="active"><a href="hire-labour.php">Hire Labour</a></li>
-          <li><a href="buy-fodders.php">Buy Fodder</a></li>
-          <li><a href="#">Farm: <?php echo $user_data['user_name'] ?></a></li>
-          <li><a href="logout.php">Logout</a></li>
-
-        </ul>
-      </nav><!-- .nav-menu -->
-
-      <a href="my-profile-farm.php" class="get-started-btn scrollto">My Profile</a>
+      <h1 class="logo"><a href="#">TheCattleFarm</a></h1>
 
     </div>
   </header><!-- End Header -->
@@ -77,10 +58,10 @@ session_start();
       <div class="container">
 
         <div class="d-flex justify-content-between align-items-center">
-          <h2>Hire Labour</h2>
+          <h2>Extra Info For Complete Signing up</h2>
           <ol>
-            <li><a href="index.php">Home</a></li>
-            <li>Hire Labour</li>
+            <li><a href="#">Home</a></li>
+            <li>Extra Info</li>
           </ol>
         </div>
 
@@ -88,36 +69,39 @@ session_start();
     </section><!-- End Breadcrumbs -->
 
     <section class="inner-page">
-        <div class="container">
-            <h3>Hire Labour</h3>
-            <div class="row">
-                <?php
-                    while($row = mysqli_fetch_array($all_labours)) {
-                ?>
+        <div class="container" style="max-width: 700px;">
+        <h3>Extra Info</h3>
+        <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+            <select class="form-control mb-3" name="category" required>
+                <option disabled selected value>What is the Type of Labour you do?</option>
+                <option>Cleaning</option>
+                <option>Feeding</option>
+                <option>Doctor</option>
+            </select>
 
-                <div class="col-6">
-                    <a href=<?php echo "my-product.php?id=". $row['id'] ?>><img src=<?php echo "./uploads/".$row['image'] ?> alt="" style="width: 50%; border: 1px solid #cda45e;"></a>
-                    <h5>Name: <?php echo $row['user_name'] ?></h5>
-                    <h5>Labour Type: <?php echo $row['category'] ?></h5>
-                </div>
-
-                <?php } ?>
-            </div>
-        </div>
+            <input type="submit" class="btn btn-primary" value="Complete Registration">
+            <?php
+                if($_SERVER['REQUEST_METHOD'] == "POST") {
+                    $category = $_POST['category'];
+            
+                    $query = "update users set category = '$category' where user_name = '$user_name'";
+                    $result = mysqli_query($con, $query);
+            
+                    if($result) {
+                        header('Location: index.php');
+                    } else {
+                        $msg =  "Error completing your registeration!";
+                    }
+                }
+            ?>
+        </form>
+      </div>
     </section>
 
   </main><!-- End #main -->
 
   <a href="#" class="back-to-top"><i class="ri-arrow-up-line"></i></a>
   <div id="preloader"></div>
-
-  <script>
-    n =  new Date();
-    y = n.getFullYear();
-    m = n.getMonth() + 1;
-    d = n.getDate();
-    document.getElementById("date").innerHTML = m + "/" + d + "/" + y;
-  </script>
 
   <!-- Vendor JS Files -->
   <script src="assets/vendor/jquery/jquery.min.js"></script>
