@@ -6,8 +6,8 @@ session_start();
 
     $user_data = check_login($con);
 
-    $products_reserv_query = "select * from products_reserv";
-    $products_reserv = mysqli_query($con, $products_reserv_query);
+    $all_farms_query = "select * from users where user_role = 'farm'";
+    $all_farms = mysqli_query($con, $all_farms_query);
 
 ?>
 
@@ -55,17 +55,13 @@ session_start();
       <nav class="nav-menu d-none d-lg-block">
         <ul>
           <li><a href="index.php">Home</a></li>
-          <li class="active"><a href="products-reserv.php">Products Reservations</a></li>
-          <li><a href="new-fodder.php">Add New Fodder</a></li>
-          <li><a href="avail-fodders.php">Available Fodders</a></li>
-          <li><a href="fodders-sales.php">Fodders Sales</a></li>
-          <li><a href="#">Admin: <?php echo $user_data['user_name'] ?></a></li>
+          <li class="active"><a href="all-farms-cli.php">All Farms</a></li>
+          <li><a href="my-reservs.php">My Reservations</a></li>
           <li><a href="logout.php">Logout</a></li>
-
         </ul>
       </nav><!-- .nav-menu -->
 
-      <a href="#" class="get-started-btn scrollto">Balance: <?php echo $user_data['balance'] ?> L.E</a>
+      <a href="#" class="get-started-btn scrollto">Customer: <?php echo $user_data['user_name'] ?></a>
 
     </div>
   </header><!-- End Header -->
@@ -77,10 +73,10 @@ session_start();
       <div class="container">
 
         <div class="d-flex justify-content-between align-items-center">
-          <h2>Products Reservations</h2>
+          <h2>All Farms</h2>
           <ol>
             <li><a href="index.php">Home</a></li>
-            <li>Products Reservations</li>
+            <li>All Farms</li>
           </ol>
         </div>
 
@@ -89,34 +85,18 @@ session_start();
 
     <section class="inner-page">
         <div class="container">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>Farm Name</th>
-                <th>Customer Name</th>
-                <th>Product Name</th>
-                <th>Quantity</th>
-                <th>Farm Response</th>
-            </tr>
-            </thead>
-            <tbody>
-
+            <div class="row">
                 <?php
-                    while($row = mysqli_fetch_array($products_reserv)) {
+                    while($row = mysqli_fetch_array($all_farms)) {
                 ?>
 
-                <tr>
-                    <td><?php echo $row['farm_name'] ?></td>
-                    <td><?php echo $row['customer_name'] ?></td>
-                    <td><?php echo $row['product_name'] ?></td>
-                    <td><?php echo $row['quantity'] ?></td>
-                    <td><?php echo $row['response'] ?></td>
-                </tr>
+                <div class="col-6">
+                    <a href=<?php echo "farm-cli.php?id=". $row['id'] ?>><img src=<?php echo "./uploads/".$row['image'] ?> alt="" style="width: 50%; border: 1px solid #cda45e;"></a>
+                    <h5>Farm Name: <?php echo $row['user_name'] ?></h5>
+                </div>
 
                 <?php } ?>
-        
-            </tbody>
-        </table>
+            </div>
       </div>
     </section>
 
