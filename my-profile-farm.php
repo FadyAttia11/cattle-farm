@@ -10,6 +10,9 @@ session_start();
     $my_products_query = "select * from products where farm_name = '$farm_name'";
     $my_products = mysqli_query($con, $my_products_query);
 
+    $my_reservs_query = "select * from products_reserv where farm_name = '$farm_name' and response = ''";
+    $my_reservs = mysqli_query($con, $my_reservs_query);
+
 ?>
 
 <!DOCTYPE html>
@@ -118,6 +121,44 @@ session_start();
             </div>
         </div>
 
+        <div class="portfolio-description">
+            <h2>Reservations To My Products</h2>
+            <div class="row">
+                <?php
+                    while($row = mysqli_fetch_array($my_reservs)) {
+                ?>
+
+                <div class="card col-5 ml-2" style="width: 18rem;">
+                    <div class="card-body">
+                        <p class="card-text">Quantity: <?php echo $row['quantity'] ?> Unit</p>
+                        <p class="card-text">Message: <?php echo $row['message'] ?></p>
+                        <form method="post">
+                            <input type="hidden" name="reserv_id" value=<?php echo $row['id'] ?>>
+                            <textarea class="form-control mb-3" rows="5" name="response" placeholder="Your Response.."></textarea>
+                            <input type="submit" class="btn btn-primary" value="Send Response">
+                            <?php 
+                              if($_SERVER['REQUEST_METHOD'] == "POST") {
+                                $reserv_id = $_POST['reserv_id'];
+                                $response = $_POST['response'];
+
+                                $query = "update products_reserv set response = '$response' where id = '$reserv_id'";
+                                $result = mysqli_query($con, $query);
+
+                                if($result) {
+                                  echo "Successfully sent your response to the customer";
+                                } else {
+                                  echo "Error sending your response to the customer";
+                                }
+                              }
+                            ?>
+                        </form>
+                    </div>
+                </div>
+
+                <?php } ?>
+            </div>
+        </div>
+
         
       </div>
     </section><!-- End Portfolio Details Section -->
@@ -132,12 +173,12 @@ session_start();
 
           <div class="col-lg-3 col-md-6">
             <div class="footer-info">
-              <h3>Dewi</h3>
+              <h3>TheCattleFarm</h3>
               <p>
-                A108 Adam Street <br>
-                NY 535022, USA<br><br>
-                <strong>Phone:</strong> +1 5589 55488 55<br>
-                <strong>Email:</strong> info@example.com<br>
+                Heliopolis <br>
+                Cairo 535022, EG<br><br>
+                <strong>Phone:</strong> 0100 255 1010<br>
+                <strong>Email:</strong> support@cattle-farm.com<br>
               </p>
               <div class="social-links mt-3">
                 <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
@@ -163,17 +204,17 @@ session_start();
           <div class="col-lg-3 col-md-6 footer-links">
             <h4>Our Services</h4>
             <ul>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Web Design</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Web Development</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Product Management</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Marketing</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Graphic Design</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Add New Product</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Offers & Promotions</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Hire Labour</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Buy Online</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Get Reservations</a></li>
             </ul>
           </div>
 
           <div class="col-lg-4 col-md-6 footer-newsletter">
             <h4>Our Newsletter</h4>
-            <p>Tamen quem nulla quae legam multos aute sint culpa legam noster magna</p>
+            <p>Subscribe to our newsletter to never miss anything related to our services.</p>
             <form action="" method="post">
               <input type="email" name="email"><input type="submit" value="Subscribe">
             </form>
